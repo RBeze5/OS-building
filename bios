@@ -1,0 +1,38 @@
+; The following code is written for NASM (Netwide Assembler)
+
+org 0x7C00     ; Set the origin to 0x7C00, where the BIOS loads the bootloader
+
+section .text
+
+start:
+    ; Clear all registers
+    xor ax, ax
+    mov ds, ax
+    mov es, ax
+    mov ss, ax
+    mov sp, 0x7C00
+
+    ; Load the first sector (512 bytes) from the boot device into memory
+    mov ah, 0x02       ; BIOS read sector function
+    mov al, 1           ; Number of sectors to read (1 sector = 512 bytes)
+    mov ch, 0x00       ; Cylinder number
+    mov dh, 0x00       ; Head number
+    mov dl, 0x80       ; Boot device (for the first hard drive, 0x80)
+    mov bx, 0x7E00     ; Address to load the sector into (0x7E00 = 0x7C00 + 512 bytes)
+    int 0x13           ; Call BIOS interrupt 13h to read the sector
+
+    ; Check if the read operation was successful (AH should be 0)
+    jc read_error
+    cmp ah, 0
+    jne read_error
+
+    ; Jump to the loaded operating system
+    jmp 0x7E00
+
+read_error:
+    ; Handle read error (you can add your own error handling here)
+    hlt               ; Halt the CPU
+
+; Padding and boot signature
+times 510 - ($ - start) db 0
+dw 0xAA55           ; Boot signature

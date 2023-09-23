@@ -1,0 +1,18 @@
+section .data
+    hello db 'Hello, World!',0
+    len equ $ - hello
+
+section .text
+global _start
+
+_start:
+    mov eax, 4       ; syscall number for write
+    mov ebx, 1       ; file descriptor (stdout)
+    mov ecx, hello   ; pointer to the message
+    mov edx, len     ; message length
+    int 0x80         ; invoke syscall
+
+    ; Exit the program
+    mov eax, 1       ; syscall number for exit
+    mov ebx, 0       ; exit status
+    int 0x80         ; invoke syscall

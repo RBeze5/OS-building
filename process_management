@@ -1,0 +1,14 @@
+section .text
+global _start
+
+_start:
+    ; Create a new process
+    ; Load program code and data
+    ; Initialize process control block
+    ; Schedule the process to run
+    ; ...
+
+    ; Terminate the current process
+    mov eax, 1       ; syscall number for exit
+    mov ebx, 0       ; exit status
+    int 0x80         ; invoke syscall
